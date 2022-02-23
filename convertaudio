@@ -16,17 +16,12 @@ get_audio_ext()
     ffprobe "$1" 2>&1 >/dev/null | grep "Audio:" | awk '{ print $4 }' | sed "s/,//g"
 }
 
-get_filename()
-{
-    echo $1 | sed "s/\.\///" | cut -f1 -d'.' | rev | cut -f1 -d'/' | rev
-}
-
 convert() {
     filepath="$(select_file "$1")"
     ext_in="$(get_audio_ext "$filepath")"
     ext_out="flac"
 
-    filename="$(get_filename "$filepath")"
+    filename="$(basename "$filepath")"
     file_tmp="$(echo $filename"."$ext_in)"
     file_out="$(echo $filename"."$ext_out)"
 
