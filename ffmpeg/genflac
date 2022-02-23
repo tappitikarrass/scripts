@@ -1,0 +1,16 @@
+#!/bin/sh
+# author: Andrii Lytvyn (lytvyn349@gmail.com)
+# description: convert webm and mkv files to flac
+# required: ffmpeg; awk;
+
+IN_CODEC=$(ffprobe "$1" 2>&1 >/dev/null | grep "Audio:" | awk '{ print $4 }' | sed "s/,//g")
+OUT_CODEC="flac"
+FILE=$(echo $1 | cut -f 1  -d '.')
+FILE_TMP=$(echo $FILE"."$IN_CODEC)
+FILE_OUT=$(echo $FILE"."$OUT_CODEC)
+
+ffmpeg -i "$1" -vn -acodec copy "$FILE_TMP"
+ffmpeg -i "$FILE_TMP" "$FILE_OUT"
+
+rm "$FILE_TMP" "$1"
+clear ; ls *webm *mkv

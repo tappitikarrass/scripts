@@ -1,0 +1,53 @@
+#!/bin/sh
+# author: Andrii Lytvyn (lytvyn349@gmail.com)
+# description: rotate touchscreen display and input
+# required: xinput; xrandr;
+
+WPATH="$HOME/.local/share/wallpaper"
+mkdir "$WPATH"
+touch "$WPATH"
+
+P="Wacom ISDv4 E6 Pen Pen (0)"
+E="Wacom ISDv4 E6 Pen Eraser (0)"
+F="Wacom ISDv4 E6 Finger"
+
+N="1 0 0 0 1 0 0 0 1"
+R="0 1 0 -1 0 1 0 0 1"
+L="0 -1 1 1 0 0 0 0 1"
+I="-1 0 1 0 -1 1 0 0 1"
+
+rotate() {
+    xinput set-prop "$1" --type=float "Coordinate Transformation Matrix" $2
+}
+
+rotate_batch() {
+    rotate "$P" "$1";
+    rotate "$E" "$1";
+    rotate "$F" "$1";
+}
+
+updstat () {
+    echo "$1" > "$WPATH/status"
+}
+
+case $1 in
+    normal)
+        updstat normal;
+        xrandr -o normal ;
+        rotate_batch "$N" ;;
+    right)
+        updstat right;
+        xrandr -o right ;
+        rotate_batch "$R" ;;
+    inverted)
+        updstat inverted;
+        xrandr -o inverted ;
+        rotate_batch "$I" ;;
+    left)
+        updstat left;
+        xrandr -o left ;
+        rotate_batch "$L" ;;
+    *) echo "Invalid arguments" ;;
+esac
+
+exec "$HOME/.local/scripts/setbg"

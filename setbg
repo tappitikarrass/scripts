@@ -1,0 +1,37 @@
+#!/bin/sh
+# author: Andrii Lytvyn (lytvyn349@gmail.com)
+# description: set properly rotated wallpaper
+
+# $1 - file path
+# $2 - hsetroot mode
+
+[ -z "$2" ] && MODE="cover" || MODE="$2"
+WPATH="$HOME/.local/share/wallpaper"
+
+init() {
+    mkdir -p "$WPATH"
+    rm "$WPATH/*.png"
+}
+
+gen() {
+    cp "$1" "$WPATH/normal.png"
+    convert "$WPATH/normal.png" -rotate 270 "$WPATH/right.png"
+    convert "$WPATH/normal.png" -rotate 90 "$WPATH/left.png"
+}
+
+setroot() {
+    OR=$(cat "$WPATH"/status)
+    case $OR in
+        normal | inverted)  hsetroot -"$MODE" "$WPATH/normal.png";;
+        right)              hsetroot -"$MODE" "$WPATH/right.png";;
+        left)               hsetroot -"$MODE" "$WPATH/left.png";;
+    esac
+}
+
+setroot_exit() {
+    setroot ; exit 0
+}
+
+[ -z "$1" ] && setroot_exit
+
+init ; gen "$1" ; setroot
