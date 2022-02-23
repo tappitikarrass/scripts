@@ -1,0 +1,47 @@
+#!/bin/sh
+# author: Andrii Lytvyn (lytvyn349@gmail.com)
+# description: convert webm, mkv and m4a files to flac
+# required: ffmpeg; ffprobe; awk; fzf;
+
+# $1 - convert all files in current directory ["all", ""]
+
+select_file()
+{
+    test "$(find | grep "mkv\|webm\|m4a")" || exit 0
+    [ -z "$1" ] && find | grep "mkv\|webm\|m4a" | fzf || echo "$1"
+}
+
+get_audio_ext()
+{
+    ffprobe "$1" 2>&1 >/dev/null | grep "Audio:" | awk '{ print $4 }' | sed "s/,//g"
+}
+
+get_filename()
+{
+    echo $1 | sed "s/\.\///" | cut -f1 -d'.' | rev | cut -f1 -d'/' | rev
+}
+
+convert() {
+    filepath="$(select_file "$1")"
+    ext_in="$(get_audio_ext "$filepath")"
+    ext_out="flac"
+
+    filename="$(get_filename "$filepath")"
+    file_tmp="$(echo $filename"."$ext_in)"
+    file_out="$(echo $filename"."$ext_out)"
+
+    ffmpeg -y -i "$filepath" -vn -acodec copy "$file_tmp"
+    ffmpeg -y -i "$file_tmp" "$file_out"
+    rm "$filepath" "$file_tmp" ; clear
+}
+
+convert_loop() {
+    do=true
+    while $do || test "$filepath"; do
+        do=false
+        filepath="$(find | grep "mkv\|webm\|m4a" | sed "s/\.\///" | head -1)"
+        convert "$filepath"
+    done
+}
+
+[ "$1" = "all" ] && convert_loop || convert
