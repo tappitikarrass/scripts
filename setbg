@@ -5,7 +5,7 @@
 # $1 - file path
 # $2 - hsetroot mode
 
-[ -z "$2" ] && MODE="cover" || MODE="$2"
+[ -z "$2" ] && MODE="full" || MODE="$2"
 WPATH="$HOME/.local/share/wallpaper"
 
 init() {
