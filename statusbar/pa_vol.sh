@@ -3,9 +3,14 @@
 # description: print volume status to stdout
 # required: pactl; awk; ttf-material-design-iconic-font;
 
-PA_SVOL=$(pactl list sinks | grep Volume | sed "2,4d" | awk '{print $5}')
-PA_SMUTE=$(pactl list sinks | grep Mute | sed 2d | grep yes)
+status ()
+{
+    vol=$(pactl list sinks | grep Volume | sed "2,4d" | awk '{print $5}'| sed "s/%//")
+    mute=$(pactl list sinks | grep Mute | sed 2d | grep yes)
 
-[ -z "$PA_SMUTE" ] && SICON=""|| SICON=""
+    [ -z "$mute" ] && icon="" || icon=""
 
-echo "$SICON $PA_SVOL"
+    echo "$icon$vol%"
+}
+
+status

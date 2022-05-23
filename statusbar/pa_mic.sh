@@ -3,8 +3,13 @@
 # description: print microphone mute status icon to stdout
 # required: pulseaudio; pactl; ttf-material-design-iconic-font;
 
-PA_MMUTE=$(pactl list sources | grep Mute | sed "1d;3,4d" | grep yes)
+status()
+{
+    muted=$(pactl list sources | grep Mute | sed "1d;3,4d" | grep yes)
 
-[ -z "$PA_MMUTE" ] && MICON=""|| MICON=""
+    [ -z "$muted" ] && icon="REC"
 
-echo "$MICON"
+    echo "$icon"
+}
+
+status
