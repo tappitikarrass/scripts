@@ -1,4 +1,6 @@
 #!/bin/python3
+#        author: Andrii Lytvyn (lytvyn349@gmail.com)
+#   description: print unicode private use area glyphs. useful to check fonts which provide icons
 
 def print_pua(s, len):
     count = 0

@@ -1,10 +1,19 @@
 #!/bin/sh
+#        author: Andrii Lytvyn (lytvyn349@gmail.com)
+#   description: dwmblocks statusbar script
+#         POSIX: yes
+#      required: grep, awk, xargs, echo,
+#                sed, pactl(pulseaudio),
+#                cat, date, trans(translate-shell),
+#                cmus-remote(cmus), curl
+#
 
 wlan()
 {
     icon=""
     if grep -q wl* "/proc/net/wireless"; then
         percentage="$(grep "^\s*w" /proc/net/wireless | awk '{ print "", int($3 * 100 / 70)}'| xargs)"
+        [ -z "$percentage" ] && echo "$icon" && exit 0
 
         [ "$percentage" -gt "0" ] && icon=""
         [ "$percentage" -gt "25" ] && icon=""
@@ -47,8 +56,7 @@ bat()
 date()
 {
     LANG=uk_UA.utf8
-
-    echo "$(date "+%A %d %B" | sed 's/./\U&/') $(date "+%R:%S")"
+    echo "$(/bin/date "+%A %d %B" | sed 's/./\U&/') $(/bin/date "+%R:%S")"
 }
 
 cmus()
@@ -77,11 +85,11 @@ weather()
 }
 
 case "$1" in
+    "date") date ;;
     "wlan") wlan ;;
     "cmus") cmus ;;
     "pa_mic") pa_mic ;;
     "pa_vol") pa_vol ;;
     "bat") bat ;;
-    "date") date ;;
     "weather") weather ;;
 esac

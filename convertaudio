@@ -1,9 +1,9 @@
 #!/bin/sh
-# author: Andrii Lytvyn (lytvyn349@gmail.com)
-# description: convert webm, mkv and m4a files to flac
-# required: ffmpeg; ffprobe; awk; fzf;
-
-# $1 - convert all files in current directory ["all", ""]
+#        author: Andrii Lytvyn (lytvyn349@gmail.com)
+#         POSIX: yes
+#   description: convert webm, mkv and m4a files to flac
+#      required: ffmpeg, ffprobe, awk, fzf
+#          args: $1 - convert all files in current directory ["all", ""]
 
 select_file()
 {

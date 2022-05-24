@@ -1,7 +1,8 @@
 #!/bin/sh
-# author: Andrii Lytvyn (lytvyn349@gmail.com)
-# description: rotate touchscreen display and input
-# required: xinput; xrandr;
+#        author: Andrii Lytvyn (lytvyn349@gmail.com)
+#         POSIX: yes
+#   description: rotate touchscreen display and input. strongly related with setbg script
+#      required: xinput, xrandr
 
 WPATH="$HOME/.local/share/wallpaper"
 mkdir "$WPATH"

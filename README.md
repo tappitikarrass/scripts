@@ -1,4 +1,4 @@
 todo
 ----
 - [x] unify statusbar scripts
-- [ ] update readmes
+- [x] update readmes
