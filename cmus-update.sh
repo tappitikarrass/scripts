@@ -23,12 +23,12 @@ clean()
 
 feh_cmd()
 {
-    window_width="$(xdotool getactivewindow getwindowgeometry | grep ' Geometry: ' | awk '{ print $2 }'| cut -d 'x' -f1)"
-    window_height="$(xdotool getactivewindow getwindowgeometry | grep ' Geometry: ' | awk '{ print $2 }'| cut -d 'x' -f2)"
+    screen_width="$(xrandr --current | grep '*' | uniq | awk '{ print $1 }'| cut -d 'x' -f1)"
+    screen_height="$(xrandr --current | grep '*' | uniq | awk '{ print $1 }'| cut -d 'x' -f2)"
 
     size=200
-    w="$(echo "$window_width - $size - 4" | bc)" 
-    h="$(echo "$window_height - $size - 3 - 21" | bc)" 
+    w="$(echo "$screen_width - $size - 4" | bc)" 
+    h=18
     
     feh --class albumcover -. -g "$size"x"$size"+"$w"+"$h" "$1" &
 }
