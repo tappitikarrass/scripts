@@ -1,4 +1,1 @@
-todo
-----
-- [x] unify statusbar scripts
-- [x] update readmes
+My UNIX shell scripts and Python scripts too.
