@@ -32,7 +32,7 @@ feh_cmd()
     w="$(echo "$screen_width - $size - 4" | bc)" 
     h=18
     
-    feh --class albumcover -. -g "$size"x"$size"+"$w"+"$h" "$1" &
+    feh --class albumcover -. -B black -g "$size"x"$size"+"$w"+"$h" "$1" &
 }
 
 draw()
