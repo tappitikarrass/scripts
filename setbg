@@ -1,11 +1,17 @@
 #!/bin/sh
+
+# =============================================================================
+#
 #        author: Andrii Lytvyn (lytvyn349@gmail.com)
 #         POSIX: yes
 #   description: set screen wallpaper. supports screen rotation.
 #                strongly related to screenr script
 #      required: convert(imagemagick), hsetroot
 #          args: $1 - file path
-#                $2 - hsetroot mode ["center", "cover", "tile", "full"(default), "extend", "fill" ]
+#                $2 - hsetroot mode ["center", "cover", "tile",
+#                     "full"(default), "extend", "fill" ]
+#
+# =============================================================================
 
 [ -z "$2" ] && MODE="full" || MODE="$2"
 WPATH="$HOME/.local/share/wallpaper"

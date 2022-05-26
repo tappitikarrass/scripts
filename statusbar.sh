@@ -1,4 +1,7 @@
 #!/bin/sh
+
+# =============================================================================
+#
 #        author: Andrii Lytvyn (lytvyn349@gmail.com)
 #   description: dwmblocks statusbar script
 #         POSIX: yes
@@ -7,6 +10,7 @@
 #                cat, date, trans(translate-shell),
 #                cmus-remote(cmus), curl
 #
+# =============================================================================
 
 wlan()
 {
