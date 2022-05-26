@@ -5,7 +5,9 @@
 #        author: Andrii Lytvyn (lytvyn349@gmail.com)
 #         POSIX: yes
 #   description: cmus update script. includes album art display
-#      required: cmus, dwmblocks-async, kill, pidof, feh, awk, xdotool
+#      required: cmus, dwmblocks-async, kill, pidof, feh,
+#                awk, xrandr, uniq, grep, xsetroot,
+#                dwm(fsignal, canfocus)
 #
 # =============================================================================
 
@@ -38,8 +40,8 @@ draw()
     img_path="$(cmus-remote -Q | grep 'file ' | sed 's/file //;s:[^/]*$::')"
 
     [ -f "$img_path""$1" ] && feh_cmd "$img_path""$1"
-    xsetroon -name "fsignal:2"
-    xsetroon -name "fsignal:2"
+    xsetroot -name "fsignal:2"
+    xsetroot -name "fsignal:2"
 }
 
 try_draw()
