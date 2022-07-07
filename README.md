@@ -1,1 +1,1 @@
-My UNIX shell scripts and Python scripts too.
+My POSIX shell, Bash and Python scripts.
