@@ -1,11 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 
 # =============================================================================
 #
 #        author: Andrii Lytvyn (lytvyn349@gmail.com)
-#         POSIX: yes
+#         POSIX: no
 #   description: set screen wallpaper. supports screen rotation.
-#                strongly related to screenr script
+#                strongly related to screenr script.
+#                if run without arguments will restore last set wallpaper (useful for xinitrc).
+#                will set red background if no wallpaper was ever set.
 #      required: convert(imagemagick), hsetroot
 #          args: $1 - file path
 #                $2 - hsetroot mode ["center", "cover", "tile",
@@ -14,32 +16,44 @@
 # =============================================================================
 
 [ -z "$2" ] && MODE="full" || MODE="$2"
-WPATH="$HOME/.local/share/wallpaper"
+
+WORK_PATH="$HOME/.local/share/wallpaper"
 
 init() {
-    mkdir -p "$WPATH"
-    rm "$WPATH/*.png"
+	mkdir -p "$WORK_PATH"
+	cp "$1" "$WORK_PATH/normal.png"
+
+	cd "$WORK_PATH" || exit 1
+	rm "*.png" -f
 }
 
-gen() {
-    cp "$1" "$WPATH/normal.png"
-    convert "$WPATH/normal.png" -rotate 270 "$WPATH/right.png"
-    convert "$WPATH/normal.png" -rotate 90 "$WPATH/left.png"
+generate() {
+	convert "normal.png" -rotate 270 "right.png"
+	convert "normal.png" -rotate 90 "left.png"
+	echo "normal" >"$WORK_PATH/status"
 }
 
 setroot() {
-    OR=$(cat "$WPATH"/status)
-    case $OR in
-        normal | inverted)  hsetroot -"$MODE" "$WPATH/normal.png";;
-        right)              hsetroot -"$MODE" "$WPATH/right.png";;
-        left)               hsetroot -"$MODE" "$WPATH/left.png";;
-    esac
+	cd "$WORK_PATH" || exit 1
+	STATUS=$(cat status 2>/dev/null)
+	case $STATUS in
+	right) hsetroot -"$MODE" "right.png" &>/dev/null ;;
+	left) hsetroot -"$MODE" "left.png" &>/dev/null ;;
+	normal | inverted) hsetroot -"$MODE" "normal.png" &>/dev/null ;;
+	*)
+		hsetroot -solid red &>/dev/null
+		echo -e "\e[31m[E] No wallpaper to restore. Set one with - setbg <path to image>\e[m"
+		;;
+	esac
 }
 
-setroot_exit() {
-    setroot ; exit 0
+just_setroot() {
+	setroot
+	exit 0
 }
 
-[ -z "$1" ] && setroot_exit
+[ -z "$1" ] && just_setroot
 
-init ; gen "$1" ; setroot
+init "$1"
+generate
+setroot

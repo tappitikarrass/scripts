@@ -6,94 +6,59 @@
 #   description: dwmblocks statusbar script
 #         POSIX: yes
 #      required: grep, awk, xargs, echo,
-#                sed, pactl(pulseaudio),
-#                cat, date, trans(translate-shell),
-#                cmus-remote(cmus), curl
+#                sed, pactl(pulseaudio), cat
+#                date, trans(translate-shell), curl
 #
 # =============================================================================
 
-wlan()
-{
-    icon=""
-    if grep -q wl* "/proc/net/wireless"; then
-        percentage="$(grep "^\s*w" /proc/net/wireless | awk '{ print "", int($3 * 100 / 70)}'| xargs)"
-        [ -z "$percentage" ] && echo "$icon" && exit 0
+pa_mic() {
+	muted=$(pactl list sources | grep Mute | sed "1d;3,4d" | grep yes)
 
-        [ "$percentage" -gt "0" ] && icon=""
-        [ "$percentage" -gt "25" ] && icon=""
-        [ "$percentage" -gt "50" ] && icon=""
-        [ "$percentage" -gt "75" ] && icon=""
-    fi
+	[ -z "$muted" ] && icon="  "
 
-    echo "$icon"
+	echo "$icon"
 }
 
-pa_mic()
-{
-    muted=$(pactl list sources | grep Mute | sed "1d;3,4d" | grep yes)
+pa_vol() {
+	vol=$(pactl list sinks | grep Volume | sed "2,4d" | awk '{print $5}' | sed "s/%//")
+	mute=$(pactl list sinks | grep Mute | sed 2d | grep yes)
 
-    [ -z "$muted" ] && icon="REC"
+	[ -z "$mute" ] && icon="墳  " || icon="ﱝ  "
 
-    echo "$icon"
+	echo "$icon$vol%"
 }
 
-pa_vol()
-{
-    vol=$(pactl list sinks | grep Volume | sed "2,4d" | awk '{print $5}'| sed "s/%//")
-    mute=$(pactl list sinks | grep Mute | sed 2d | grep yes)
+bat() {
+	capacity=$(cat /sys/class/power_supply/BAT0/capacity)
+	ac=$(cat /sys/class/power_supply/AC/online)
 
-    [ -z "$mute" ] && icon="" || icon=""
+	[ "$ac" -eq "0" ] && icon="  " || icon="ﮣ  "
 
-    echo "$icon$vol%"
+	echo "$icon$capacity%"
 }
 
-bat()
-{
-    capacity=$(cat /sys/class/power_supply/BAT0/capacity)
-    ac=$(cat /sys/class/power_supply/AC/online)
-
-    [ "$ac" -eq "0" ] && icon="" || icon=""
-
-    echo "$icon$capacity%"
+date() {
+	LANG=uk_UA.utf8
+	echo "$(/bin/date "+%A %d %B" | sed 's/./\U&/') $(/bin/date "+%R:%S")"
 }
 
-date()
-{
-    LANG=uk_UA.utf8
-    echo "$(/bin/date "+%A %d %B" | sed 's/./\U&/') $(/bin/date "+%R:%S")"
-}
+weather() {
+	city="Lviv"
+	# city="Kryviy%20Rih"
 
-cmus()
-{
-    title="$(cmus-remote -Q | grep 'tag title' | sed 's/tag title //')"
-    artist="$(cmus-remote -Q | grep 'tag artist' | sed 's/tag artist //')"
-    status="$(cmus-remote -Q | grep 'status' | sed 's/status //')"
+	emoji=$(curl -s wttr.in/$city?format='%c')
+	temp=$(curl -s wttr.in/$city?format='%f')
+	msg="$(curl -s wttr.in/$city?format='%C' | trans en:uk -b)"
 
-    [ "$status" = "playing" ] && status=""
-    [ "$status" = "paused" ] && status=""
-    
-    [ -z "$title" ] || [ -z "$artist" ] && exit 0
-    echo " $artist - $title $status"
-}
-
-weather()
-{
-    city="Lviv"
-    city="Kryviy%20Rih"
-
-    emoji=$(curl -s wttr.in/$city?format='%c')
-    temp=$(curl -s wttr.in/$city?format='%f')
-    msg="$(curl -s wttr.in/$city?format='%C' | trans en:uk -b)"
-
-    echo "$emoji$msg $temp"
+	echo "$emoji$msg $temp"
 }
 
 case "$1" in
-    "date") date ;;
-    "wlan") wlan ;;
-    "cmus") cmus ;;
-    "pa_mic") pa_mic ;;
-    "pa_vol") pa_vol ;;
-    "bat") bat ;;
-    "weather") weather ;;
+"date") date ;;
+"wlan") wlan ;;
+"cmus") cmus ;;
+"pa_mic") pa_mic ;;
+"pa_vol") pa_vol ;;
+"bat") bat ;;
+"weather") weather ;;
 esac

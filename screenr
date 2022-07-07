@@ -1,61 +1,68 @@
-#!/bin/sh
+#!/bin/bash
 
 # =============================================================================
 #
 #        author: Andrii Lytvyn (lytvyn349@gmail.com)
-#         POSIX: yes
+#         POSIX: no
 #   description: rotate touchscreen display and input.
 #                strongly related with setbg script
 #      required: xinput, xrandr
 #
 # =============================================================================
 
-
-WPATH="$HOME/.local/share/wallpaper"
-mkdir "$WPATH"
-touch "$WPATH"
+WORK_PATH="$HOME/.local/share/wallpaper"
+mkdir "$WORK_PATH" 2>/dev/null
+touch "$WORK_PATH" 2>/dev/null
 
 P="Wacom ISDv4 E6 Pen Pen (0)"
 E="Wacom ISDv4 E6 Pen Eraser (0)"
 F="Wacom ISDv4 E6 Finger"
 
-N="1 0 0 0 1 0 0 0 1"
-R="0 1 0 -1 0 1 0 0 1"
-L="0 -1 1 1 0 0 0 0 1"
-I="-1 0 1 0 -1 1 0 0 1"
+# N="1 0 0 0 1 0 0 0 1"   # Normal
+# R="0 1 0 -1 0 1 0 0 1"  # Right
+# L="0 -1 1 1 0 0 0 0 1"  # Left
+# I="-1 0 1 0 -1 1 0 0 1" # Inverted
 
 rotate() {
-    xinput set-prop "$1" --type=float "Coordinate Transformation Matrix" $2
+	xinput set-prop "$1" \
+		--type=float \
+		"Coordinate Transformation Matrix" $2 &>/dev/null
 }
 
 rotate_batch() {
-    rotate "$P" "$1";
-    rotate "$E" "$1";
-    rotate "$F" "$1";
+	rotate "$P" "$1"
+	rotate "$E" "$1"
+	rotate "$F" "$1"
 }
 
-updstat () {
-    echo "$1" > "$WPATH/status"
+update_status() {
+	echo "$1" >"$WORK_PATH/status"
 }
 
+# Uncomment rotate_batch and $N, $R, $L, $I variables to enable touchscreen input rotation.
+# And change xinput names according to your hardware. Get correct from 'xinput --list' command.
 case $1 in
-    normal)
-        updstat normal;
-        xrandr -o normal ;
-        rotate_batch "$N" ;;
-    right)
-        updstat right;
-        xrandr -o right ;
-        rotate_batch "$R" ;;
-    inverted)
-        updstat inverted;
-        xrandr -o inverted ;
-        rotate_batch "$I" ;;
-    left)
-        updstat left;
-        xrandr -o left ;
-        rotate_batch "$L" ;;
-    *) echo "Invalid arguments" ;;
+normal)
+	update_status normal
+	xrandr -o normal
+	# rotate_batch "$N"
+	;;
+right)
+	update_status right
+	xrandr -o right
+	# rotate_batch "$R"
+	;;
+inverted)
+	update_status inverted
+	xrandr -o inverted
+	# rotate_batch "$I"
+	;;
+left)
+	update_status left
+	xrandr -o left
+	# rotate_batch "$L"
+	;;
+*) echo "Invalid arguments" ;;
 esac
 
-exec "$HOME/.local/scripts/setbg"
+exec "$SCRIPTS_HOME/setbg"
